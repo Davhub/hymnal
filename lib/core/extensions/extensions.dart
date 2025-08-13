@@ -1,0 +1,1 @@
+export 'package:dlgc_hymnal/core/extensions/text_style_extensions.dart';

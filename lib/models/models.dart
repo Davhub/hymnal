@@ -1,0 +1,1 @@
+export 'hymn_model.dart';
