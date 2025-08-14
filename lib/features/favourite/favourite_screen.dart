@@ -60,21 +60,20 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            // In the _buildEmptyState method, update the CustomButton onPressed:
-CustomButton(
-  text: "Browse Hymns",
-  onPressed: () {
-    // Navigate to HomeScreen with hymns tab selected (index 1)
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(initialIndex: 1),
-      ),
-      (route) => false,
-    );
-  },
-  icon: Icons.menu_book,
-),
+            CustomButton(
+              text: "Browse Hymns",
+              onPressed: () {
+                // Navigate to HomeScreen with hymns tab selected (index 1)
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomeScreen(initialIndex: 1),
+                  ),
+                  (route) => false,
+                );
+              },
+              icon: Icons.menu_book,
+            ),
           ],
         ),
       ),
@@ -88,11 +87,7 @@ CustomButton(
       itemBuilder: (context, index) {
         final hymn = favorites[index];
         return HymnListItem(
-          number: hymn.number,
-          title: hymn.title,
-          tags: hymn.tags,
-          category: hymn.category,
-          tune: hymn.tune,
+          hymn: hymn, // Updated to pass the whole hymn object
           onFavoriteTap: () {
             setState(() {
               DemoData.toggleFavorite(hymn.number);

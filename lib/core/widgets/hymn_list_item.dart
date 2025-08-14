@@ -1,25 +1,17 @@
 import 'package:dlgc_hymnal/core/assets/assets.dart';
 import 'package:dlgc_hymnal/core/providers/text_size_provider.dart';
 import 'package:dlgc_hymnal/models/hymn_model.dart';
-import 'package:dlgc_hymnal/features/features.dart';
+import 'package:dlgc_hymnal/features/hymn_details/hymn_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HymnListItem extends StatelessWidget {
-  final int number;
-  final String title;
-  final List<String> tags;
-  final String? category;
-  final String? tune;
+  final HymnModel hymn;
   final VoidCallback onFavoriteTap;
 
   const HymnListItem({
     super.key,
-    required this.number,
-    required this.title,
-    required this.tags,
-    this.category,
-    this.tune,
+    required this.hymn,
     required this.onFavoriteTap,
   });
 
@@ -29,8 +21,7 @@ class HymnListItem extends StatelessWidget {
       builder: (context, textSizeProvider, child) {
         return GestureDetector(
           onTap: () {
-            final hymn = DemoData.hymns.firstWhere((h) => h.number == number);
-            DemoData.markAsRecentlyViewed(number);
+            DemoData.markAsRecentlyViewed(hymn.number);
             
             Navigator.push(
               context,
@@ -44,7 +35,7 @@ class HymnListItem extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              color: Colors.grey.shade50,
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12.withOpacity(0.05),
@@ -58,7 +49,7 @@ class HymnListItem extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: AppColors.primary.withOpacity(0.1),
                   child: Text(
-                    number.toString(),
+                    hymn.number.toString(),
                     style: TextStyle(
                       fontSize: textSizeProvider.mediumText,
                       fontWeight: FontWeight.bold,
@@ -72,7 +63,7 @@ class HymnListItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        hymn.title,
                         style: TextStyle(
                           fontSize: textSizeProvider.largeText,
                           fontWeight: FontWeight.bold,
@@ -83,7 +74,7 @@ class HymnListItem extends StatelessWidget {
                       // Category and Tune row with responsive text
                       Row(
                         children: [
-                          if (category != null) ...[
+                          if (hymn.category.isNotEmpty) ...[
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
@@ -91,7 +82,7 @@ class HymnListItem extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                category!,
+                                hymn.category,
                                 style: TextStyle(
                                   fontSize: textSizeProvider.smallText,
                                   color: Colors.blue[700],
@@ -100,7 +91,7 @@ class HymnListItem extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                           ],
-                          if (tune != null)
+                          if (hymn.tune.isNotEmpty)
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
@@ -108,7 +99,7 @@ class HymnListItem extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                'Tune: $tune',
+                                'Tune: ${hymn.tune}',
                                 style: TextStyle(
                                   fontSize: textSizeProvider.smallText,
                                   color: Colors.green[700],
@@ -120,15 +111,16 @@ class HymnListItem extends StatelessWidget {
                       const SizedBox(height: 6),
                       Wrap(
                         spacing: 6,
-                        children: tags.map((tag) => _buildTag(tag, textSizeProvider)).toList(),
+                        children: hymn.tags.map((tag) => _buildTag(tag, textSizeProvider)).toList(),
                       )
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.favorite_border,
-                    color: Colors.red,
+                IconButton( 
+                  icon: Icon(
+                    hymn.isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: hymn.isFavorite ? Colors.red : Colors.grey,
+                    size: 24, 
                   ),
                   onPressed: onFavoriteTap,
                 )
@@ -141,16 +133,19 @@ class HymnListItem extends StatelessWidget {
   }
 
   Widget _buildTag(String text, TextSizeProvider textSizeProvider) {
-    return Chip(
-      label: Text(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
         text,
         style: TextStyle(
           fontSize: textSizeProvider.smallText,
           color: AppColors.primary,
         ),
       ),
-      backgroundColor: AppColors.primary.withOpacity(0.1),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
     );
   }
 }
